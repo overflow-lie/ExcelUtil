@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sirun.util.excel.dao.SsssShopInfoMapper">
+    <resultMap id="BaseResultMap" type="com.sirun.util.excel.bean.SsssShopInfo">
+        <id column="ssss_id" property="ssssId" jdbcType="BIGINT"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="county" property="county" jdbcType="VARCHAR"/>
+        <result column="ssss_name" property="ssssName" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="complaint_phone" property="complaintPhone" jdbcType="VARCHAR"/>
+        <result column="recommend" property="recommend" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="geo_hash" property="geoHash" jdbcType="VARCHAR"/>
+        <result column="latitude" property="latitude" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="VARCHAR"/>
+        <result column="vehicle_brand" property="vehicleBrand" jdbcType="VARCHAR"/>
+    </resultMap>
+
+   <sql id="Base_Column_List">
+    ssss_id, province, city, county, ssss_name, address, phone, complaint_phone, recommend, 
+    remark, geo_hash, latitude, longitude, vehicle_brand
+  </sql>
+
+  <update id="updatePhoneBySsssName" parameterType="com.sirun.util.excel.bean.SsssShopInfo">
+  	  update mt_ssss_shop_info
+  	  set phone = #{phone,jdbcType=VARCHAR}, province = #{province,jdbcType=VARCHAR} ,city = #{city,jdbcType=VARCHAR}
+  	  where ssss_name like CONCAT('%','${ssssName}','%') 
+  </update>
+  
+  <insert id="insertBatch">
+  	  insert into mt_ssss_shop_info(province,city,county,ssss_name,address,phone,remark,latitude,longitude)
+  	  values
+  	  <foreach collection="ssiList" separator="," item="item">
+  	  	(#{item.province},#{item.city},"中国",#{item.ssssName},#{item.address},#{item.phone},"remark",#{item.longitude},#{item.latitude})
+  	  </foreach>
+  </insert>
+  
+  <insert id="insertBatchPort">
+  	 insert into mt_ssss_shop_info(province,city,county,ssss_name,phone,remark)
+  	  values
+  	  <foreach collection="ssiList" separator="," item="item">
+  	  	(#{item.province},#{item.city},"中国",#{item.ssssName},#{item.address},#{item.phone},"remark")
+  	  </foreach>
+  </insert>
+  
+  <select id="selectAllSsssShopInfo" resultMap="BaseResultMap">
+  		select * from mt_ssss_shop_info where vehicle_brand="A02"
+  </select>
+  
+  <insert id="insertBatchByVehicle"> 
+  	 insert into mt_ssss_shop_info(province,city,county,ssss_name,address,phone,remark,latitude,longitude,vehicle_brand)
+  	 values
+  	  <foreach collection="vehicleBrandList" separator="," item="item">
+  	  	(#{ssssShopInfo.province}, #{ssssShopInfo.city}, '中国', #{ssssShopInfo.ssssName}, #{ssssShopInfo.address},  #{ssssShopInfo.phone},'remark', #{ssssShopInfo.latitude}, #{ssssShopInfo.longitude}, #{item})
+  	  </foreach>
+  </insert>
+</mapper>
